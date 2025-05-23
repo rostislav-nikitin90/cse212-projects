@@ -22,7 +22,29 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var seen = new HashSet<string>(); // Tracks seen words
+        var pairs = new HashSet<string>(); // Tracks unique pairs
+
+        foreach (var word in words)
+        {
+            char first = word[0];
+            char second = word[1];
+
+            // Avoid matching same-character words
+            if (first != second)
+            {
+                string reversed = new string(new char[] { second, first });
+
+                if (seen.Contains(reversed))
+                {
+                    pairs.Add($"{word} & {reversed}");
+                }
+            }
+
+            seen.Add(word);
+        }
+
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -43,6 +65,17 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            if (fields.Length >= 4) // Ensure there are at least 4 columns
+            {
+                var degree = fields[3].Trim(); // Extract and trim the degree name
+
+                if (!degrees.ContainsKey(degree))
+                {
+                    degrees[degree] = 0;
+                }
+
+                degrees[degree]++;
+            }
         }
 
         return degrees;
@@ -67,7 +100,33 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        // Remove spaces and convert to lowercase
+        word1 = word1.Replace(" ", "").ToLower();
+        word2 = word2.Replace(" ", "").ToLower();
+
+        if (word1.Length != word2.Length)
+            return false;
+
+        var charCounts = new Dictionary<char, int>();
+
+        // Count occurrences of each character in word1
+        foreach (var c in word1)
+        {
+            if (charCounts.ContainsKey(c))
+                charCounts[c]++;
+            else
+                charCounts[c] = 1;
+        }
+
+        // Reduce counts using word2 characters
+        foreach (var c in word2)
+        {
+            if (!charCounts.ContainsKey(c) || charCounts[c] == 0)
+                return false;
+            charCounts[c]--;
+        }
+
+        return true;
     }
 
     /// <summary>
